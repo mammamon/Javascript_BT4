@@ -174,11 +174,11 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-user"></i></span>
 								</div>
-								<input type="text" name="tk" id="tknv" class="form-control input-sm"
+								<input type="text" id="userName" class="form-control input-sm"
 									placeholder="Tài khoản">
 							</div>
 
-							<span class="sp-thongbao" id="tbTKNV"></span>
+							<span class="check" id="check-userName"></span>
 						</div>
 
 						<div class="form-group">
@@ -186,10 +186,10 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-address-book"></i></span>
 								</div>
-								<input type="name" name="name" id="name" class="form-control input-sm"
+								<input type="name" id="fullName" class="form-control input-sm"
 									placeholder="Họ và tên">
 							</div>
-							<span class="sp-thongbao" id="tbTen"></span>
+							<span class="check" id="check-fullName"></span>
 						</div>
 
 						<div class="form-group">
@@ -197,11 +197,11 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-envelope"></i></span>
 								</div>
-								<input type="email" name="email" id="email" class="form-control input-sm"
+								<input type="email" id="email" class="form-control input-sm"
 									placeholder="Email">
 							</div>
 
-							<span class="sp-thongbao" id="tbEmail"></span>
+							<span class="check" id="check-email"></span>
 						</div>
 
 						<div class="form-group">
@@ -209,10 +209,10 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-key"></i></span>
 								</div>
-								<input type="password" name="password" id="password" class="form-control input-sm"
+								<input type="password" id="password" class="form-control input-sm"
 									placeholder="Mật khẩu">
 							</div>
-							<span class="sp-thongbao" id="tbMatKhau"></span>
+							<span class="check" id="check-password"></span>
 						</div>
 
 						<div class="form-group">
@@ -220,11 +220,11 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-calendar"></i></span>
 								</div>
-								<input type="text" name="ngaylam" id="datepicker" class="form-control"
+								<input type="text" name="ngaylam" id="datep" class="form-control"
 									placeholder="Ngày làm">
 							</div>
 
-							<span class="sp-thongbao" id="tbNgay"></span>
+							<span class="check" id="check-date"></span>
 						</div>
 
 						<div class="form-group">
@@ -232,17 +232,17 @@
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-money" aria-hidden="true"></i></span>
 								</div>
-								<input type="text" name="luongCB" id="luongCB" class="form-control input-sm"
+								<input type="text" id="wage" class="form-control input-sm"
 									placeholder="Lương cơ bản">
 							</div>
-							<span class="sp-thongbao" id="tbLuongCB"></span>
+							<span class="check" id="check-wage"></span>
 						</div>
 						<div class="form-group">
 							<div class="input-group">
 								<div class="input-group-prepend">
 									<span class="input-group-text"><i class="fa fa-briefcase"></i></span>
 								</div>
-								<select class="form-control" id="chucvu">
+								<select class="form-control" id="position">
 									<option>Chọn chức vụ</option>
 									<option>Sếp</option>
 									<option>Trưởng phòng</option>
@@ -250,7 +250,7 @@
 								</select>
 							</div>
 
-							<span class="sp-thongbao" id="tbChucVu"></span>
+							<span class="check" id="check-position"></span>
 						</div>
 						<div class="form-group">
 							<div class="input-group">
@@ -258,10 +258,10 @@
 									<span class="input-group-text"><i class="fa fa-clock-o"
 											aria-hidden="true"></i></span>
 								</div>
-								<input type="text" name="gioLam" id="gioLam" class="form-control input-sm"
+								<input type="text" id="workingHours" class="form-control input-sm"
 									placeholder="Giờ làm">
 							</div>
-							<span class="sp-thongbao" id="tbGiolam"></span>
+							<span class="check" id="check-workingHours"></span>
 						</div>
 
 					</form>
@@ -298,9 +298,7 @@
 	<!-- <script src="vendor/modal.js"></script> -->
 	
 	<!-- MAIN JS -->
-	<script src="./js/model.js"></script>
-	<script src="./js/view.js"></script>
-	<script src="./js/controller.js"></script>
+	<script src="./js/main.js"></script>
 </body>
 
 </html>
