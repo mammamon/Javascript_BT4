@@ -157,6 +157,10 @@ button:hover {
     transform: translatey(3px);
     box-shadow: none;
 }
+.form-group .check {
+    color: red;
+    font-size: 13px;
+}
 
 /* buttons hover Animation */
 button:hover {
