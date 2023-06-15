@@ -58,7 +58,6 @@ function StaffList() {
 }
 var staffList = new StaffList();
 
-
 //------------------------ VIEW ------------------------//
 // Render StaffList
 function render() {
@@ -86,17 +85,10 @@ function render() {
     getElement('#tableDanhSach').innerHTML = content;
 }
 localStorageLoad();
+
+
 //------------------------ VALIDATION ------------------------//
-function getInput() {
-    var userName = getElement('#userName').value;
-    var fullName = getElement('#fullName').value;
-    var email = getElement('#email').value;
-    var password = getElement('#password').value;
-    var date = getElement('#date').value;
-    var wage = +getElement('#wage').value;
-    var position = getElement('#position').value;
-    var workingHours = +getElement('#workingHours').value;
-    // Validation
+function validation(userName, fullName, email, password, date, wage, position, workingHours) {
     var isValid = true;
     // Check inputs trống
     if (!userName || !fullName || !email || !password || !date || !wage || !position || !workingHours) {
@@ -165,7 +157,7 @@ function getInput() {
         var dateObj = new Date(year, month - 1, day);
         if (dateObj.getFullYear() !== year || dateObj.getMonth() + 1 !== month || dateObj.getDate() !== day) {
             isValid = false;
-            getElement('#check-date').innerHTML = 'Ngày nhập không hợp lệ';
+            getElement('#check-date').innerHTML = 'Tháng/ngày/năm nhập không hợp lệ';
         } else {
             getElement('#check-date').innerHTML = '';
         }
@@ -191,9 +183,20 @@ function getInput() {
     } else {
         getElement('#check-workingHours').innerHTML = ' '
     }
-    // chỉ tạo staff mới khi isValid = true
-    console.log(isValid);
-    if (isValid) {
+    return isValid;
+}
+
+//------------------------ GET INPUT ------------------------//
+function getInput() {
+    var userName = getElement('#userName').value;
+    var fullName = getElement('#fullName').value;
+    var email = getElement('#email').value;
+    var password = getElement('#password').value;
+    var date = getElement('#date').value;
+    var wage = +getElement('#wage').value;
+    var position = getElement('#position').value;
+    var workingHours = +getElement('#workingHours').value;
+    if (validation(userName, fullName, email, password, date, wage, position, workingHours)) {
         var staff = new Staff(
             userName,
             fullName,
@@ -264,7 +267,7 @@ getElement('#btnThemNV').onclick = function () {
 }
 //Xóa staff ra khỏi mảng
 function deleteStaff(index) {
-    staffList.deleteStaff(index)
+    staffList.deleteStaff(index);
     render();
     localStorageSave();
 }
