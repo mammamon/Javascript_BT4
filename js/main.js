@@ -102,8 +102,13 @@ function render() {
         `;
     }
     getElement('#tableDanhSach').innerHTML = content;
+
 }
-localStorageLoad();
+
+// hiển thị nút thêm người dùng
+getElement('#btnThem').addEventListener('click', function () {
+    getElement('#btnThemNV').style.display = 'block';
+});
 
 
 //------------------------ VALIDATION ------------------------//
@@ -273,6 +278,9 @@ function localStorageLoad() {
     }
     render();
 }
+localStorageLoad();
+
+
 //------------------------ CONTROLLER ------------------------//
 //Thêm staff mới vào bảng
 getElement('#btnThemNV').onclick = function () {
@@ -301,17 +309,5 @@ function editStaff(index) {
     getElement('#position').value = staff.position;
     getElement('#wage').value = staff.wage;
     getElement('#workingHours').value = staff.workingHours;
-}
-getElement('#btnCapNhat').addEventListener('click', function () {
-    var newInfo = {
-        fullName: getElement('#fullName').value,
-        email: getElement('#email').value,
-        date: getElement('#date').value,
-        position: getElement('#position').value,
-        wage: getElement('#wage').value,
-        workingHours: getElement('#workingHours').value
-    };
-    staffList.editStaff(staff.userName, newInfo);
-    // Hide modal
-    getElement('.modal-dialog').style.display = 'none';
-});
+    getElement('#btnThemNV').style.display = 'none';
+};

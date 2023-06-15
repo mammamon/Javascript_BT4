@@ -213,6 +213,9 @@ a.article:hover {
     height: 75.2px;
     justify-content: center ;
 }
+#btnThemNV {
+    display: none;
+}
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
