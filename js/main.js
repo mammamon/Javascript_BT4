@@ -321,9 +321,9 @@ getElement('#btnCapNhat').onclick = function () {
     var email = getElement('#email').value;
     var password = getElement('#password').value;
     var date = getElement('#date').value;
+    var wage = +getElement('#wage').value;
     var position = getElement('#position').value;
-    var wage = getElement('#wage').value;
-    var workingHours = getElement('#workingHours').value;
+    var workingHours = +getElement('#workingHours').value;
 
     // Validate input values (except for userName)
     if (validation(userName, fullName, email, password, date, wage, position, workingHours, false)) {
@@ -339,6 +339,5 @@ getElement('#btnCapNhat').onclick = function () {
         staff.workingHours = workingHours;
         render();
         localStorageSave();
-        getElement('#form').reset();
     }
 }
