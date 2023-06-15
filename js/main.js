@@ -33,13 +33,13 @@ function Staff(_userName, _fullName, _email, _password, _date, _wage, _position,
         //method xếp loại nhân viên
         this.rating = function () {
             if (this.workingHours >= 192) {
-                return "nhân viên xuất sắc";
+                return "xuất sắc";
             } else if (this.workingHours >= 176) {
-                return "nhân viên giỏi";
+                return "giỏi";
             } else if (this.workingHours >= 160) {
-                return "nhân viên khá";
+                return "khá";
             } else {
-                return "nhân viên trung bình";
+                return "trung bình";
             }
         }
 };
@@ -55,15 +55,9 @@ function StaffList() {
     this.deleteStaff = function (index) {
         this.arrStaff.splice(index, 1);
     }
-    //tìm staff
-    this.findStaff = function (userName) {
-        return this.arrStaff.find(function (staff) {
-            return staff.userName === userName;
-        });
-    }
     //sửa staff
-    this.editStaff = function (userName, newInfo) {
-        var staff = this.findStaff(userName);
+    this.editStaff = function (index, newInfo) {
+        var staff = this.arrStaff[index];
         if (staff) {
             staff.fullName = newInfo.fullName;
             staff.email = newInfo.email;
@@ -106,31 +100,33 @@ function render() {
 }
 
 // hiển thị nút thêm người dùng
-getElement('#btnThem').addEventListener('click', function () {
+getElement('#btnThem').onclick = function () {
     getElement('#btnThemNV').style.display = 'block';
-});
+    getElement('#btnCapNhat').style.display = 'none';
+};
 
 
 //------------------------ VALIDATION ------------------------//
-function validation(userName, fullName, email, password, date, wage, position, workingHours) {
+function validation(userName, fullName, email, password, date, wage, position, workingHours, duplicateUserName) {
     var isValid = true;
     // Check inputs trống
     if (!userName || !fullName || !email || !password || !date || !wage || !position || !workingHours) {
         isValid = false;
         alert('Vui lòng nhập đầy đủ thông tin');
     }
-    // Check userName
+
     var staffList = JSON.parse(localStorage.getItem('staffList'));
     if (staffList === null) {
         staffList = [];
     } else {
         staffList = staffList.arrStaff;
     }
-
+    // Check userName
     if (userName.length < 4 || userName.length > 6 || isNaN(userName)) {
         isValid = false;
         getElement('#check-userName').innerHTML = 'Tài khoản phải là dãy số từ 4 đến 6 số';
-    } else if (staffList.some(function (staff) { return staff.userName === userName; })) {
+        // bỏ kiểm tra trùng userName khi cập nhật
+    } else if (duplicateUserName && staffList.some(function (staff) { return staff.userName === userName; })) {
         isValid = false;
         getElement('#check-userName').innerHTML = 'Tài khoản đã tồn tại';
     } else {
@@ -220,7 +216,7 @@ function getInput() {
     var wage = +getElement('#wage').value;
     var position = getElement('#position').value;
     var workingHours = +getElement('#workingHours').value;
-    if (validation(userName, fullName, email, password, date, wage, position, workingHours)) {
+    if (validation(userName, fullName, email, password, date, wage, position, workingHours,true)) {
         var staff = new Staff(
             userName,
             fullName,
@@ -265,13 +261,13 @@ function localStorageLoad() {
             };
             staffList.arrStaff[i].rating = function () {
                 if (this.workingHours >= 192) {
-                    return "nhân viên xuất sắc";
+                    return "xuất sắc";
                 } else if (this.workingHours >= 176) {
-                    return "nhân viên giỏi";
+                    return "giỏi";
                 } else if (this.workingHours >= 160) {
-                    return "nhân viên khá";
+                    return "khá";
                 } else {
-                    return "nhân viên trung bình";
+                    return "trung bình";
                 }
             };
         }
@@ -299,15 +295,50 @@ function deleteStaff(index) {
     localStorageSave();
 }
 //sửa staff hiện có
+var currentIndex;
+
 function editStaff(index) {
     var staff = staffList.arrStaff[index];
     // Set input values in modal to current staff information
     getElement('#userName').value = staff.userName;
     getElement('#fullName').value = staff.fullName;
     getElement('#email').value = staff.email;
+    getElement('#password').value = staff.password;
     getElement('#date').value = staff.date;
     getElement('#position').value = staff.position;
     getElement('#wage').value = staff.wage;
     getElement('#workingHours').value = staff.workingHours;
     getElement('#btnThemNV').style.display = 'none';
-};
+    getElement('#btnCapNhat').style.display = 'block';
+
+    // Set currentIndex to index of current staff member being edited
+    currentIndex = index;
+}
+getElement('#btnCapNhat').onclick = function () {
+    // Get input values from modal
+    var userName = getElement('#userName').value;
+    var fullName = getElement('#fullName').value;
+    var email = getElement('#email').value;
+    var password = getElement('#password').value;
+    var date = getElement('#date').value;
+    var position = getElement('#position').value;
+    var wage = getElement('#wage').value;
+    var workingHours = getElement('#workingHours').value;
+
+    // Validate input values (except for userName)
+    if (validation(userName, fullName, email, password, date, wage, position, workingHours, false)) {
+        // Update staff information if validation passes
+        var staff = staffList.arrStaff[currentIndex];
+        staff.userName = userName;
+        staff.fullName = fullName;
+        staff.email = email;
+        staff.password = password;
+        staff.date = date;
+        staff.position = position;
+        staff.wage = wage;
+        staff.workingHours = workingHours;
+        render();
+        localStorageSave();
+        getElement('#form').reset();
+    }
+}
