@@ -1,10 +1,12 @@
 //------------------------ UTILITIES ------------------------//
+
 function getElement(selector) {
     return document.querySelector(selector)
 }
 
 
 //------------------------ MODEL ------------------------//
+
 //constructor Staff
 function Staff(_userName, _fullName, _email, _password, _date, _wage, _position, _workingHours) {
     this.userName = _userName,
@@ -71,7 +73,9 @@ function StaffList() {
 
 var staffList = new StaffList();
 
+
 //------------------------ VIEW ------------------------//
+
 // Render StaffList
 function render() {
     var content = '';
@@ -96,17 +100,11 @@ function render() {
         `;
     }
     getElement('#tableDanhSach').innerHTML = content;
-
 }
-
-// hiển thị nút thêm người dùng
-getElement('#btnThem').onclick = function () {
-    getElement('#btnThemNV').style.display = 'block';
-    getElement('#btnCapNhat').style.display = 'none';
-};
 
 
 //------------------------ VALIDATION ------------------------//
+
 function validation(userName, fullName, email, password, date, wage, position, workingHours, duplicateUserName) {
     var isValid = true;
     // Check inputs trống
@@ -206,32 +204,9 @@ function validation(userName, fullName, email, password, date, wage, position, w
     return isValid;
 }
 
-//------------------------ GET INPUT ------------------------//
-function getInput() {
-    var userName = getElement('#userName').value;
-    var fullName = getElement('#fullName').value;
-    var email = getElement('#email').value;
-    var password = getElement('#password').value;
-    var date = getElement('#date').value;
-    var wage = +getElement('#wage').value;
-    var position = getElement('#position').value;
-    var workingHours = +getElement('#workingHours').value;
-    if (validation(userName, fullName, email, password, date, wage, position, workingHours,true)) {
-        var staff = new Staff(
-            userName,
-            fullName,
-            email,
-            password,
-            date,
-            wage,
-            position,
-            workingHours
-        );
-        return staff;
-    }
-}
 
 //------------------------ LOCAL STORAGE ------------------------//
+
 // lưu staffList vào local storage
 function localStorageSave() {
     localStorage.setItem('staffList', JSON.stringify(staffList));
@@ -278,7 +253,34 @@ localStorageLoad();
 
 
 //------------------------ CONTROLLER ------------------------//
-//Thêm staff mới vào bảng
+
+//lấy input từ modal và tạo staff mới nếu thỏa validation
+function getInput() {
+    var userName = getElement('#userName').value;
+    var fullName = getElement('#fullName').value;
+    var email = getElement('#email').value;
+    var password = getElement('#password').value;
+    var date = getElement('#date').value;
+    var wage = +getElement('#wage').value;
+    var position = getElement('#position').value;
+    var workingHours = +getElement('#workingHours').value;
+    //check valid có kiểm tra trùng username (duplicateUserName = true)
+    if (validation(userName, fullName, email, password, date, wage, position, workingHours, true)) {
+        var staff = new Staff(
+            userName,
+            fullName,
+            email,
+            password,
+            date,
+            wage,
+            position,
+            workingHours
+        );
+        return staff;
+    }
+}
+
+//Thêm staff mới vào mảng
 getElement('#btnThemNV').onclick = function () {
     var staff = getInput();
     if (staff) {
@@ -288,18 +290,19 @@ getElement('#btnThemNV').onclick = function () {
         getElement('#form').reset();
     };
 }
+
 //Xóa staff ra khỏi mảng
 function deleteStaff(index) {
     staffList.deleteStaff(index);
     render();
     localStorageSave();
 }
-//sửa staff hiện có
-var currentIndex;
 
+//sửa staff hiện có dựa trên index
+var currentIndex;
 function editStaff(index) {
     var staff = staffList.arrStaff[index];
-    // Set input values in modal to current staff information
+    // hiện lại các giá trị của input trong modal 
     getElement('#userName').value = staff.userName;
     getElement('#fullName').value = staff.fullName;
     getElement('#email').value = staff.email;
@@ -308,14 +311,13 @@ function editStaff(index) {
     getElement('#position').value = staff.position;
     getElement('#wage').value = staff.wage;
     getElement('#workingHours').value = staff.workingHours;
+    //ẩn nút thêm hiện nút cập nhật
     getElement('#btnThemNV').style.display = 'none';
     getElement('#btnCapNhat').style.display = 'block';
-
-    // Set currentIndex to index of current staff member being edited
     currentIndex = index;
 }
 getElement('#btnCapNhat').onclick = function () {
-    // Get input values from modal
+    // lấy input từ modal 
     var userName = getElement('#userName').value;
     var fullName = getElement('#fullName').value;
     var email = getElement('#email').value;
@@ -324,10 +326,8 @@ getElement('#btnCapNhat').onclick = function () {
     var wage = +getElement('#wage').value;
     var position = getElement('#position').value;
     var workingHours = +getElement('#workingHours').value;
-
-    // Validate input values (except for userName)
+    //check valid không kiểm tra trùng username (duplicateUserName = false)
     if (validation(userName, fullName, email, password, date, wage, position, workingHours, false)) {
-        // Update staff information if validation passes
         var staff = staffList.arrStaff[currentIndex];
         staff.userName = userName;
         staff.fullName = fullName;
@@ -339,5 +339,12 @@ getElement('#btnCapNhat').onclick = function () {
         staff.workingHours = workingHours;
         render();
         localStorageSave();
+        getElement('#form').reset();
     }
 }
+
+// ẩn nút cập nhật hiện nút thêm
+getElement('#btnThem').onclick = function () {
+    getElement('#btnThemNV').style.display = 'block';
+    getElement('#btnCapNhat').style.display = 'none';
+};
