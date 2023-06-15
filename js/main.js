@@ -55,7 +55,26 @@ function StaffList() {
     this.deleteStaff = function (index) {
         this.arrStaff.splice(index, 1);
     }
+    //tìm staff
+    this.findStaff = function (userName) {
+        return this.arrStaff.find(function (staff) {
+            return staff.userName === userName;
+        });
+    }
+    //sửa staff
+    this.editStaff = function (userName, newInfo) {
+        var staff = this.findStaff(userName);
+        if (staff) {
+            staff.fullName = newInfo.fullName;
+            staff.email = newInfo.email;
+            staff.date = newInfo.date;
+            staff.position = newInfo.position;
+            staff.wage = newInfo.wage;
+            staff.workingHours = newInfo.workingHours;
+        }
+    }
 }
+
 var staffList = new StaffList();
 
 //------------------------ VIEW ------------------------//
@@ -76,7 +95,7 @@ function render() {
                 <td>${staff.totalWage()}</td>
                 <td>${staff.rating()}</td>
                 <td class = "btn-staff d-flex">
-                    <button class ="btn btn-success mr-2" onclick="editStaff(${i})">Edit</button>
+                    <button class ="btn btn-success mr-2" data-toggle="modal" data-target="#myModal" onclick="editStaff(${i})">Edit</button>
                     <button class ="btn btn-danger" onclick="deleteStaff(${i})">Xóa</button>
                 </td>
             </tr>
@@ -271,3 +290,28 @@ function deleteStaff(index) {
     render();
     localStorageSave();
 }
+//sửa staff hiện có
+function editStaff(index) {
+    var staff = staffList.arrStaff[index];
+    // Set input values in modal to current staff information
+    getElement('#userName').value = staff.userName;
+    getElement('#fullName').value = staff.fullName;
+    getElement('#email').value = staff.email;
+    getElement('#date').value = staff.date;
+    getElement('#position').value = staff.position;
+    getElement('#wage').value = staff.wage;
+    getElement('#workingHours').value = staff.workingHours;
+}
+getElement('#btnCapNhat').addEventListener('click', function () {
+    var newInfo = {
+        fullName: getElement('#fullName').value,
+        email: getElement('#email').value,
+        date: getElement('#date').value,
+        position: getElement('#position').value,
+        wage: getElement('#wage').value,
+        workingHours: getElement('#workingHours').value
+    };
+    staffList.editStaff(staff.userName, newInfo);
+    // Hide modal
+    getElement('.modal-dialog').style.display = 'none';
+});
