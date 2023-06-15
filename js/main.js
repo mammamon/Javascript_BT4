@@ -28,7 +28,7 @@ function Staff(_userName, _fullName, _email, _password, _date, _wage, _position,
                 default:
                     bonus = 1;
             }
-            return this.workingHours * this.wage * bonus;
+            return this.wage * bonus;
         },
         //method xếp loại nhân viên
         this.rating = function () {
@@ -47,9 +47,13 @@ function Staff(_userName, _fullName, _email, _password, _date, _wage, _position,
 //constructor StaffList
 function StaffList() {
     this.arrStaff = [];
-    //thêm dữ liệu mới
+    //thêm staff mới
     this.addNewStaff = function (staff) {
         this.arrStaff.push(staff);
+    }
+    //xóa staff hiện có
+    this.deleteStaff = function (index) {
+        this.arrStaff.splice(index, 1);
     }
 }
 var staffList = new StaffList();
@@ -72,6 +76,10 @@ function render() {
                 <td>${staff.position}</td>
                 <td>${staff.totalWage()}</td>
                 <td>${staff.rating()}</td>
+                <td class = "btn-staff d-flex">
+                    <button class ="btn btn-success mr-2" onclick="editStaff(${i})">Edit</button>
+                    <button class ="btn btn-danger" onclick="deleteStaff(${i})">Xóa</button>
+                </td>
             </tr>
         `;
     }
@@ -90,80 +98,100 @@ function getInput() {
     var workingHours = +getElement('#workingHours').value;
     // Validation
     var isValid = true;
-    // Check blank inputs
+    // Check inputs trống
     if (!userName || !fullName || !email || !password || !date || !wage || !position || !workingHours) {
         isValid = false;
         alert('Vui lòng nhập đầy đủ thông tin');
     }
     // Check userName
+    var staffList = JSON.parse(localStorage.getItem('staffList'));
+    if (staffList === null) {
+        staffList = [];
+    } else {
+        staffList = staffList.arrStaff;
+    }
+
     if (userName.length < 4 || userName.length > 6 || isNaN(userName)) {
         isValid = false;
         getElement('#check-userName').innerHTML = 'Tài khoản phải là dãy số từ 4 đến 6 số';
+    } else if (staffList.some(function (staff) { return staff.userName === userName; })) {
+        isValid = false;
+        getElement('#check-userName').innerHTML = 'Tài khoản đã tồn tại';
     } else {
         getElement('#check-userName').innerHTML = '';
     }
     // Check fullName
-    if (!/^[a-zA-Z\s\u00C0-\u1EF9]*$/.test(fullName)) {
+    if (!/^[a-zA-Z\s\u00C0-\u1EF9]+$/.test(fullName)) {
         isValid = false;
-        getElement('#check-fullName').innerHTML = 'Full name must contain only letters and spaces';
+        getElement('#check-fullName').innerHTML = 'Họ và tên chỉ được chứa chữ cái và khoảng trắng';
     } else {
         getElement('#check-fullName').innerHTML = '';
     }
     // Check email
     if (!/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(email)) {
         isValid = false;
-        getElement('#check-email').innerHTML = 'Email must be in a valid format';
+        getElement('#check-email').innerHTML = 'Sai định dạng email';
     } else {
         getElement('#check-email').innerHTML = '';
     }
     // Check password
     if (password.length < 6 || password.length > 10) {
         isValid = false;
-        getElement('#check-password').innerHTML = 'Password must be between 6 and 10 characters';
+        getElement('#check-password').innerHTML = 'Mật khẩu từ 6 đến 10 kí tự';
     } else if (!/[a-z]/.test(password)) {
         isValid = false;
-        getElement('#check-password').innerHTML = 'Password must contain at least one lowercase letter';
+        getElement('#check-password').innerHTML = 'Mật khẩu phải chứa ít nhất 1 chữ cái viết thường';
     } else if (!/[A-Z]/.test(password)) {
         isValid = false;
-        getElement('#check-password').innerHTML = 'Password must contain at least one uppercase letter';
+        getElement('#check-password').innerHTML = 'Mật khẩu phải chứa ít nhất 1 chữ cái viết hoa';
     } else if (!/[0-9]/.test(password)) {
         isValid = false;
-        getElement('#check-password').innerHTML = 'Password must contain at least one number';
+        getElement('#check-password').innerHTML = 'Mật khẩu phải chứa ít nhất 1 chữ số';
     } else if (!/[^a-zA-Z0-9]/.test(password)) {
         isValid = false;
-        getElement('#check-password').innerHTML = 'Password must contain at least one special character';
+        getElement('#check-password').innerHTML = 'Mật khẩu phải chứa ít nhất 1 kí tự đặc biệt';
     } else {
         getElement('#check-password').innerHTML = '';
     }
     // Check date
     if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(date)) {
         isValid = false;
-        getElement('#check-date').innerHTML = 'Date must be in the format mm/dd/yyyy';
+        getElement('#check-date').innerHTML = 'Định dạng ngày làm theo tháng/ngày/năm -  mm/dd/yyyy';
     } else {
-        getElement('#check-date').innerHTML = '';
+        var dateParts = date.split('/');
+        var month = parseInt(dateParts[0], 10);
+        var day = parseInt(dateParts[1], 10);
+        var year = parseInt(dateParts[2], 10);
+        var dateObj = new Date(year, month - 1, day);
+        if (dateObj.getFullYear() !== year || dateObj.getMonth() + 1 !== month || dateObj.getDate() !== day) {
+            isValid = false;
+            getElement('#check-date').innerHTML = 'Ngày nhập không hợp lệ';
+        } else {
+            getElement('#check-date').innerHTML = '';
+        }
     }
     // Check wage
-    if (wage < 1e6 || wage > 20e6) {
+    if (wage < 1e+6 || wage > 20e+6) {
         isValid = false;
-        getElement('#check-wage').innerHTML = 'Wage must be between 1e6 and 20e6';
+        getElement('#check-wage').innerHTML = 'Lương cơ bản phải nằm trong khoảng từ 1 đến 20 triệu';
     } else {
         getElement('#check-wage').innerHTML = '';
     }
     // Check position
     if (['Sếp', 'Trưởng phòng', 'Nhân viên'].indexOf(position) === -1) {
         isValid = false;
-        getElement('#check-position').innerHTML = 'Please select a valid position';
+        getElement('#check-position').innerHTML = 'Vui lòng chọn 1 trong 3 chức vụ';
     } else {
         getElement('#check-position').innerHTML = '';
     }
     // Check workingHours
     if (workingHours < 80 || workingHours > 200) {
         isValid = false;
-        getElement('#check-workingHours').innerHTML = 'Working hours must be between 80 and 200';
+        getElement('#check-workingHours').innerHTML = 'Số giờ làm phải nằm trong khoảng từ 80 đến 200 giờ';
     } else {
         getElement('#check-workingHours').innerHTML = ' '
     }
-    // only add new Staff when isValid = true
+    // chỉ tạo staff mới khi isValid = true
     console.log(isValid);
     if (isValid) {
         var staff = new Staff(
@@ -177,8 +205,6 @@ function getInput() {
             workingHours
         );
         return staff;
-    } else {
-        return;
     }
 }
 
@@ -208,7 +234,7 @@ function localStorageLoad() {
                     default:
                         bonus = 1;
                 }
-                return this.workingHours * this.wage * bonus;
+                return this.wage * bonus;
             };
             staffList.arrStaff[i].rating = function () {
                 if (this.workingHours >= 192) {
@@ -235,4 +261,10 @@ getElement('#btnThemNV').onclick = function () {
         localStorageSave();
         getElement('#form').reset();
     };
+}
+//Xóa staff ra khỏi mảng
+function deleteStaff(index) {
+    staffList.deleteStaff(index)
+    render();
+    localStorageSave();
 }

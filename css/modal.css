@@ -161,6 +161,15 @@ button:hover {
     color: red;
     font-size: 13px;
 }
+.no-spinner {
+    -moz-appearance: textfield;
+}
+
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+}
 
 /* buttons hover Animation */
 button:hover {
