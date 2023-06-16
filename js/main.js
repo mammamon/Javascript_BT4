@@ -101,6 +101,53 @@ function render() {
 }
 
 
+//------------------------ LOCAL STORAGE ------------------------//
+
+// lưu staffList vào local storage
+function localStorageSave() {
+    localStorage.setItem('staffList', JSON.stringify(staffList));
+}
+
+// load staffList từ local storage
+function localStorageLoad() {
+    var data = localStorage.getItem('staffList');
+    if (data) {
+        staffList = new StaffList();
+        staffList.arrStaff = JSON.parse(data).arrStaff;
+        // Tạo lại 2 method totalWage() và rating()
+        for (var i = 0; i < staffList.arrStaff.length; i++) {
+            staffList.arrStaff[i].totalWage = function () {
+                var bonus;
+                switch (this.position) {
+                    case 'Sếp':
+                        bonus = 3;
+                        break;
+                    case 'Trưởng phòng':
+                        bonus = 2;
+                        break;
+                    default:
+                        bonus = 1;
+                }
+                return this.wage * bonus;
+            };
+            staffList.arrStaff[i].rating = function () {
+                if (this.workingHours >= 192) {
+                    return "xuất sắc";
+                } else if (this.workingHours >= 176) {
+                    return "giỏi";
+                } else if (this.workingHours >= 160) {
+                    return "khá";
+                } else {
+                    return "trung bình";
+                }
+            };
+        }
+    }
+    render();
+}
+localStorageLoad();
+
+
 //------------------------ VALIDATION ------------------------//
 
 function validation(userName, fullName, email, password, date, wage, position, workingHours, duplicateUserName) {
@@ -201,53 +248,6 @@ function validation(userName, fullName, email, password, date, wage, position, w
     }
     return isValid;
 }
-
-
-//------------------------ LOCAL STORAGE ------------------------//
-
-// lưu staffList vào local storage
-function localStorageSave() {
-    localStorage.setItem('staffList', JSON.stringify(staffList));
-}
-
-// load staffList từ local storage
-function localStorageLoad() {
-    var data = localStorage.getItem('staffList');
-    if (data) {
-        staffList = new StaffList();
-        staffList.arrStaff = JSON.parse(data).arrStaff;
-        // Tạo lại 2 method totalWage() và rating()
-        for (var i = 0; i < staffList.arrStaff.length; i++) {
-            staffList.arrStaff[i].totalWage = function () {
-                var bonus;
-                switch (this.position) {
-                    case 'Sếp':
-                        bonus = 3;
-                        break;
-                    case 'Trưởng phòng':
-                        bonus = 2;
-                        break;
-                    default:
-                        bonus = 1;
-                }
-                return this.wage * bonus;
-            };
-            staffList.arrStaff[i].rating = function () {
-                if (this.workingHours >= 192) {
-                    return "xuất sắc";
-                } else if (this.workingHours >= 176) {
-                    return "giỏi";
-                } else if (this.workingHours >= 160) {
-                    return "khá";
-                } else {
-                    return "trung bình";
-                }
-            };
-        }
-    }
-    render();
-}
-localStorageLoad();
 
 
 //------------------------ CONTROLLER ------------------------//
@@ -356,3 +356,18 @@ getElement('#btnThem').onclick = function () {
     getElement('#btnThemNV').style.display = 'block';
     getElement('#btnCapNhat').style.display = 'none';
 };
+
+//reset thông báo khi ẩn modal
+var observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
+        if (mutation.attributeName === 'style') {
+            var displayStyle = getElement('#myModal').style.display;
+            if (displayStyle === 'none') {
+                var checkElements = document.querySelectorAll('.check');
+                for (var i = 0; i < checkElements.length; i++) {
+                    checkElements[i].textContent = '';
+                }
+            }
+        }
+    });
+});
