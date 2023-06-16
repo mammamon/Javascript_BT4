@@ -79,10 +79,8 @@ var staffList = new StaffList();
 // Render StaffList
 function render() {
     var content = '';
-    console.log(staffList.arrStaff);
     for (var i = 0; i < staffList.arrStaff.length; i++) {
         var staff = staffList.arrStaff[i];
-        console.log(staff);
         content += `
             <tr>
                 <td>${staff.userName}</td>
@@ -91,7 +89,7 @@ function render() {
                 <td>${staff.date}</td>
                 <td>${staff.position}</td>
                 <td>${staff.totalWage()}</td>
-                <td>${staff.rating()}</td>
+                <td class="rating">${staff.rating()}</td>
                 <td class = "btn-staff d-flex">
                     <button class ="btn btn-success mr-2" data-toggle="modal" data-target="#myModal" onclick="editStaff(${i})">Edit</button>
                     <button class ="btn btn-danger" onclick="deleteStaff(${i})">Xóa</button>
@@ -334,6 +332,24 @@ getElement('#btnCapNhat').onclick = function () {
         getElement('#form').reset();
     }
 }
+
+//tìm kiếm staff dựa trên xếp loại
+getElement('#searchName').addEventListener('input', function () {
+    var searchValue = getElement('#searchName').value;
+    var tableRows = document.querySelectorAll('tr');
+    for (var i = 0; i < tableRows.length; i++) {
+        var rating = tableRows[i].querySelector('.rating');
+        if (rating) {
+            if (searchValue && ["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchValue) && rating.textContent === searchValue) {
+                tableRows[i].style.display = '';
+            } else if (!searchValue || !["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchValue)) {
+                tableRows[i].style.display = '';
+            } else {
+                tableRows[i].style.display = 'none';
+            }
+        }
+    }
+});
 
 // ẩn nút cập nhật hiện nút thêm
 getElement('#btnThem').onclick = function () {
