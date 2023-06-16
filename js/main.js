@@ -254,8 +254,8 @@ localStorageLoad();
 
 //------------------------ CONTROLLER ------------------------//
 
-//lấy input từ modal và tạo staff mới nếu thỏa validation
-function getInput() {
+//Thêm staff mới vào mảng
+getElement('#btnThemNV').onclick = function () {
     var userName = getElement('#userName').value;
     var fullName = getElement('#fullName').value;
     var email = getElement('#email').value;
@@ -276,19 +276,11 @@ function getInput() {
             position,
             workingHours
         );
-        return staff;
-    }
-}
-
-//Thêm staff mới vào mảng
-getElement('#btnThemNV').onclick = function () {
-    var staff = getInput();
-    if (staff) {
         staffList.addNewStaff(staff);
         render();
         localStorageSave();
         getElement('#form').reset();
-    };
+    }
 }
 
 //Xóa staff ra khỏi mảng
