@@ -1,4 +1,4 @@
-//------------------------ UTILITIES ------------------------//
+//------------------------ UTILITY ------------------------//
 
 function getElement(selector) {
     return document.querySelector(selector)
@@ -152,17 +152,16 @@ localStorageLoad();
 
 function validation(userName, fullName, email, password, date, wage, position, workingHours, duplicateUserName) {
     var isValid = true;
-    // Check inputs trống
-    if (!userName || !fullName || !email || !password || !date || !wage || !position || !workingHours) {
-        isValid = false;
-        alert('Vui lòng nhập đầy đủ thông tin');
-    }
-
     var staffList = JSON.parse(localStorage.getItem('staffList'));
     if (staffList === null) {
         staffList = [];
     } else {
         staffList = staffList.arrStaff;
+    }
+    // Check inputs trống
+    if (!userName || !fullName || !email || !password || !date || !wage || !position || !workingHours) {
+        isValid = false;
+        alert('Vui lòng nhập đầy đủ thông tin');
     }
     // Check userName
     if (userName.length < 4 || userName.length > 6 || isNaN(userName)) {
@@ -335,14 +334,14 @@ getElement('#btnCapNhat').onclick = function () {
 
 //tìm kiếm staff dựa trên xếp loại
 getElement('#searchName').addEventListener('input', function () {
-    var searchValue = getElement('#searchName').value;
+    var searchName = getElement('#searchName').value;
     var tableRows = document.querySelectorAll('tr');
     for (var i = 0; i < tableRows.length; i++) {
         var rating = tableRows[i].querySelector('.rating');
         if (rating) {
-            if (searchValue && ["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchValue) && rating.textContent === searchValue) {
+            if (searchName && ["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchName) && rating.textContent === searchName) {
                 tableRows[i].style.display = '';
-            } else if (!searchValue || !["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchValue)) {
+            } else if (!searchName || !["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchName)) {
                 tableRows[i].style.display = '';
             } else {
                 tableRows[i].style.display = 'none';
@@ -357,17 +356,18 @@ getElement('#btnThem').onclick = function () {
     getElement('#btnCapNhat').style.display = 'none';
 };
 
-//reset thông báo khi ẩn modal
+// reset các đoạn text thông báo mỗi khi đóng modal
+var modal = getElement("#myModal");
 var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-        if (mutation.attributeName === 'style') {
-            var displayStyle = getElement('#myModal').style.display;
-            if (displayStyle === 'none') {
-                var checkElements = document.querySelectorAll('.check');
-                for (var i = 0; i < checkElements.length; i++) {
-                    checkElements[i].textContent = '';
-                }
+    for (var i = 0; i < mutations.length; i++) {
+        var mutation = mutations[i];
+        if (mutation.attributeName === "style" && modal.style.display === "none") {
+            var checks = modal.querySelectorAll(".check");
+            for (var j = 0; j < checks.length; j++) {
+                var check = checks[j];
+                check.innerHTML = "";
             }
         }
-    });
+    }
 });
+observer.observe(modal, { attributes: true });
