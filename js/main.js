@@ -1,4 +1,4 @@
-//------------------------ UTILITY ------------------------//
+//------------------------ UTILITIES ------------------------//
 
 function getElement(selector) {
     return document.querySelector(selector)
@@ -339,9 +339,9 @@ getElement('#searchName').addEventListener('input', function () {
     for (var i = 0; i < tableRows.length; i++) {
         var rating = tableRows[i].querySelector('.rating');
         if (rating) {
-            if (searchName && ["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchName) && rating.textContent === searchName) {
+            if (searchName && ["xuất sắc", "giỏi", "khá", "trung bình"].indexOf(searchName) > -1 && rating.textContent === searchName) {
                 tableRows[i].style.display = '';
-            } else if (!searchName || !["xuất sắc", "giỏi", "khá", "trung bình"].includes(searchName)) {
+            } else if (!searchName || ["xuất sắc", "giỏi", "khá", "trung bình"].indexOf(searchName) === -1) {
                 tableRows[i].style.display = '';
             } else {
                 tableRows[i].style.display = 'none';
